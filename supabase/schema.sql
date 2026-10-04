@@ -13,6 +13,7 @@ create table profiles (
   avatar_url text,
   bio text,
   is_private boolean not null default false,
+  is_admin boolean not null default false,
   created_at timestamptz default now()
 );
 
@@ -355,6 +356,18 @@ alter table blocks enable row level security;
 
 create policy "Users can see their own reports" on reports for select using (auth.uid() = reporter_id);
 create policy "Users can file reports" on reports for insert with check (auth.uid() = reporter_id);
+create policy "Admins can see every report" on reports for select using (
+  exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin = true)
+);
+create policy "Admins can update report status" on reports for update using (
+  exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin = true)
+);
+create policy "Admins can delete content when acting on a report" on videos for delete using (
+  exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin = true)
+);
+create policy "Admins can delete comments when acting on a report" on comments for delete using (
+  exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin = true)
+);
 
 -- Both sides of a block can see the row (needed so the videos policy below
 -- can check it reliably from either direction); this is the one trade-off

@@ -107,13 +107,21 @@ separate React Native app) is a real future step, but not a launch blocker — P
 "feels like an app" for a launch and beyond.
 
 ## Remaining honest gaps before a public launch
-- **No admin moderation dashboard.** Reports are reviewable in Supabase directly; a proper
-  in-app queue (assign, resolve, ban) is the natural next step once this is real.
+- ~~No admin moderation dashboard~~ — **done.** `/admin` lists all reports, filterable by
+  status, with buttons to delete the reported content and mark reports reviewed/dismissed.
+  Make yourself an admin by running this once in the Supabase SQL Editor:
+  ```sql
+  update profiles set is_admin = true where handle = 'your_handle';
+  ```
 - **Payouts.** Ad revenue math exists as a screen, but no money actually moves — Flutterwave/
   Paystack integration is still phase 2.
 - **Phone-number (OTP) sign-in.** Still email/password only; phone matters more for your
   target users.
-- **Feed ranking.** Still newest-first, not a real recommendation algorithm.
+- ~~Feed ranking.~~ **Improved.** Not a real ML recommendation system, but no longer plain
+  "newest first" either — `lib/feedRanking.js` scores each video by recency + engagement
+  (likes/comments/reposts/views) plus a random factor, so the order genuinely changes on every
+  refresh instead of showing every visitor the exact same list forever. A real personalized
+  algorithm (per-viewer history, watch time) is still a future project, not a launch blocker.
 - **Video compression.** Files play back exactly as uploaded; fine for testing, worth
   revisiting (e.g. Cloudflare Stream) once real viewers are on constrained data.
 - **Blocking doesn't yet stop a blocked person from liking/commenting** — it hides their

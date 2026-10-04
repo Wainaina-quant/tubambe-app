@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../lib/AuthContext';
 import { VIDEO_SELECT, attachMyState } from '../lib/videos';
+import { rankFeed } from '../lib/feedRanking';
 import VideoFeed from '../components/VideoFeed';
 
 export default function FeedPage() {
@@ -23,7 +24,7 @@ export default function FeedPage() {
       if (error) console.error(error);
       const withState = await attachMyState(data || [], user?.id);
       if (!cancelled) {
-        setVideos(withState);
+        setVideos(rankFeed(withState));
         setLoading(false);
       }
     }
